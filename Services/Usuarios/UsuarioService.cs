@@ -98,7 +98,6 @@ namespace CRM.Services
                 .Replace("@CORREO", usuario.Correo)
                 .Replace("@DOCUMENTO", usuario.Documento)
                 .Replace("@ESTADO", usuario.Estado.ToString())
-                .Replace("@ID", usuario.Id.ToString())
                 .Replace("@IDROL", usuario.IdRol.ToString())
                 .Replace("@IDTIPODOCUMENTO", usuario.IdTipoDocumento.ToString())
                 .Replace("@NOMBRE", usuario.Nombre)

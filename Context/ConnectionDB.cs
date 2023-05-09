@@ -36,7 +36,7 @@ namespace CRM.Models
 
         public void AddParameter(String Nombre, object Valor, ParameterDirection Direccion = ParameterDirection.Input, String NombreTipo = "")
         {
-            SqlParameter Parameter = new SqlParameter
+            SqlParameter Parameter = new()
             {
                 ParameterName = "@" + Nombre,
                 Value = Valor,
@@ -80,7 +80,7 @@ namespace CRM.Models
 
             try
             {
-                SqlCommand comando = new SqlCommand
+                SqlCommand comando = new()
                 {
                     Connection = _sqlConnection,
                     CommandType = CommandType.StoredProcedure,
@@ -130,7 +130,7 @@ namespace CRM.Models
             {
                 dt = new DataTable();
                 cmd = new SqlCommand(sSQL, _sqlConnection);
-                dr = cmd.ExecuteReader();
+                dr = await cmd.ExecuteReaderAsync();
                 dt.Load(dr);
             }
             catch (Exception ex)

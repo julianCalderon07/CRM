@@ -7,14 +7,14 @@ namespace CRM.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsuariosController : ControllerBase
+    public class PeticionesController : ControllerBase
     {
         #region Variables de clase
 
         /// <summary>
-        /// Objeto para servicios de usuarios
+        /// Objeto para servicios de peticiones
         /// </summary>
-        private readonly UsuarioService _usuarioService = new();
+        private readonly PeticionService _peticionService = new();
 
         #endregion Variables de clase
 
@@ -22,12 +22,12 @@ namespace CRM.Controllers
 
         [HttpDelete]
         [HttpOptions]
-        [Route("deleteUserById")]
-        public async Task<string> DeleteById(int? id)
+        [Route("deleteRequestById")]
+        public async Task<string> DeleteById(int? idPeticion)
         {
             try
             {
-                await _usuarioService.DeleteById(id);
+                await _peticionService.DeleteById(idPeticion);
                 return JsonConvert.SerializeObject("OK");
             }
             catch (Exception ex)
@@ -38,13 +38,13 @@ namespace CRM.Controllers
 
         [HttpGet]
         [HttpOptions]
-        [Route("getAllUsers")]
+        [Route("getAllRequests")]
         public async Task<string> GetAll()
         {
             try
             {
-                List<Usuario> usuarios = await _usuarioService.GetAll();
-                return JsonConvert.SerializeObject(usuarios);
+                List<Peticion> peticiones = await _peticionService.GetAll();
+                return JsonConvert.SerializeObject(peticiones);
             }
             catch (Exception ex)
             {
@@ -54,13 +54,13 @@ namespace CRM.Controllers
 
         [HttpGet]
         [HttpOptions]
-        [Route("getUserById")]
+        [Route("getRequestById")]
         public async Task<string> GetById(int? id)
         {
             try
             {
-                Usuario usuario = await _usuarioService.GetById(id);
-                return JsonConvert.SerializeObject(usuario);
+                Peticion peticion = await _peticionService.GetById(id);
+                return JsonConvert.SerializeObject(peticion);
             }
             catch (Exception ex)
             {
@@ -70,12 +70,12 @@ namespace CRM.Controllers
 
         [HttpPost]
         [HttpOptions]
-        [Route("saveUser")]
-        public async Task<string> Save(Usuario usuario)
+        [Route("saveRequest")]
+        public async Task<string> Save(Peticion peticion)
         {
             try
             {
-                await _usuarioService.Save(usuario);
+                await _peticionService.Save(peticion);
                 return JsonConvert.SerializeObject("OK");
             }
             catch (Exception ex)
@@ -86,12 +86,12 @@ namespace CRM.Controllers
 
         [HttpPost]
         [HttpOptions]
-        [Route("saveUserById")]
-        public async Task<string> SaveById(Usuario usuario)
+        [Route("saveRequestById")]
+        public async Task<string> SaveById(Peticion peticion)
         {
             try
             {
-                await _usuarioService.SaveById(usuario);
+                await _peticionService.SaveById(peticion);
                 return JsonConvert.SerializeObject("OK");
             }
             catch (Exception ex)
