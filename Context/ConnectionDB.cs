@@ -9,14 +9,14 @@ namespace CRM.Models
         #region Variables privadas de clase
 
         /// <summary>
-        /// Cadena de conexión a la base de datos.
-        /// </summary>
-        private readonly SqlConnection conexion;
-
-        /// <summary>
         /// Lista de parámetros para el procedimiento almacenado.
         /// </summary>
-        private readonly List<SqlParameter> listParameters;
+        private readonly List<SqlParameter> _listParameters;
+
+        /// <summary>
+        /// Cadena de conexión a la base de datos.
+        /// </summary>
+        private readonly SqlConnection _sqlConnection;
 
         #endregion Variables privadas de clase
 
@@ -24,9 +24,9 @@ namespace CRM.Models
         {
             try
             {
-                this.listParameters = new List<SqlParameter>();
-                this.conexion = new SqlConnection("server=DESKTOP-K0CJDE3\\HBS;Integrated Security=false;Database=CRM;uid=admin;pwd=D4t4B4s3@dmin;");
-                this.conexion.Open();
+                _listParameters = new List<SqlParameter>();
+                _sqlConnection = new SqlConnection("server=DESKTOP-K0CJDE3\\HBS;Integrated Security=false;Database=CRM;uid=admin;pwd=D4t4B4s3@dmin;");
+                _sqlConnection.Open();
             }
             catch (Exception ex)
             {
@@ -52,38 +52,14 @@ namespace CRM.Models
             {
                 Parameter.TypeName = NombreTipo;
             }
-            this.listParameters.Add(Parameter);
+            _listParameters.Add(Parameter);
         }
 
-        public DataTable Consultar(String sSQL)
-        {
-            #region Variables de método
-
-            DataTable dt;
-            SqlCommand cmd;
-            SqlDataReader dr;
-
-            #endregion Variables de método
-
-            try
-            {
-                dt = new DataTable();
-                cmd = new SqlCommand(sSQL, this.conexion);
-                dr = cmd.ExecuteReader();
-                dt.Load(dr);
-            }
-            catch (Exception ex)
-            {
-                throw new ExternalException("ConnectionDB. " + "Consultar. " + ex.Message);
-            }
-            return dt;
-        }
-
-        public Boolean Desconectar()
+        public async Task<Boolean> Desconectar()
         {
             try
             {
-                this.conexion?.Close();
+                await _sqlConnection.CloseAsync();
                 return true;
             }
             catch (Exception ex)
@@ -92,7 +68,7 @@ namespace CRM.Models
             }
         }
 
-        public DataSet EjecutarProcedimiento(String NombreProcedimiento)
+        public async Task<DataSet> ExecuteProcedure(String NombreProcedimiento)
         {
             #region Variables de método
 
@@ -106,12 +82,12 @@ namespace CRM.Models
             {
                 SqlCommand comando = new SqlCommand
                 {
-                    Connection = this.conexion,
+                    Connection = _sqlConnection,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = NombreProcedimiento,
                     CommandTimeout = 900
                 };
-                foreach (SqlParameter parameter in this.listParameters)
+                foreach (SqlParameter parameter in _listParameters)
                 {
                     if (parameter.SqlDbType.Equals(SqlDbType.Structured))
                     {
@@ -122,7 +98,7 @@ namespace CRM.Models
                         comando.Parameters.Add(parameter);
                     }
                 }
-                SqlDataAdapter da = new SqlDataAdapter
+                SqlDataAdapter da = new()
                 {
                     SelectCommand = comando
                 };
@@ -134,10 +110,34 @@ namespace CRM.Models
             }
             finally
             {
-                this.Desconectar();
-                this.listParameters.Clear();
+                await Desconectar();
+                _listParameters.Clear();
             }
             return ds;
+        }
+
+        public async Task<DataTable> ExecuteQuery(String sSQL)
+        {
+            #region Variables de método
+
+            DataTable dt;
+            SqlCommand cmd;
+            SqlDataReader dr;
+
+            #endregion Variables de método
+
+            try
+            {
+                dt = new DataTable();
+                cmd = new SqlCommand(sSQL, _sqlConnection);
+                dr = cmd.ExecuteReader();
+                dt.Load(dr);
+            }
+            catch (Exception ex)
+            {
+                throw new ExternalException("ConnectionDB. " + "Consultar. " + ex.Message);
+            }
+            return dt;
         }
     }
 }
